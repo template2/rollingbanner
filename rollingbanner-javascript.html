@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rolling Banner</title>
+    <style>
+        html, body{
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        .container{
+            display: flex;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Banner container */
+        .rollingbanner{
+            width: 100%;
+            height: 40px;
+            font-size: .875rem;
+            color: #fff;
+            letter-spacing: -.075em;
+            background-color: #a00;
+        }
+        .rollingbanner a{
+            color: #fff;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .rollingbanner > .wrap{
+            position: relative;
+            max-width: 768px;
+            height: 40px;
+            margin: 0 auto;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .wrap::before{
+            content:'';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 100%;
+            z-index: 1;
+            background: linear-gradient(to right, rgba(170,0,0,1) 0%, rgba(170,0,0,0.75) 51%, rgba(170,0,0,0) 100%);
+        }
+        .wrap::after{
+            content:'';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 20px;
+            height: 100%;
+            z-index: 1;
+            background: linear-gradient(to right, rgba(170,0,0,0) 0%, rgba(170,0,0,0.75) 51%, rgba(170,0,0,1) 100%);
+        }
+
+        /* Animation element */
+        .roller{
+            position: absolute;
+            height: 100%;
+        }
+        .roller > ul{
+            margin: 0;
+            list-style: none;
+            padding: 9px 0;
+            display: flex;
+            flex-flow: row nowrap;
+            align-items: center;
+        }
+        .roller > ul > li{
+            padding-right: 30px;
+        }
+        .roller > ul > li span{
+            padding-right: 3px;
+        }
+        .roller > ul > li .status {
+            position: relative;
+            padding-left: 20px;
+        }
+        .roller > ul > li .status.up::before{
+            position: absolute;
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Arrow Forward</title><path fill="none" stroke="rgb(255,96,96)" stroke-linecap="square" stroke-miterlimit="10" stroke-width="48" d="M268 112l144 144-144 144M392 256H100"/></svg>');
+            transform: rotateZ(-45deg);
+            width: 18px;
+            height: 18px;
+            padding: 1px;
+            left: 0;
+        }
+        .roller > ul > li .status.down::before{
+            position: absolute;
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Arrow Forward</title><path fill="none" stroke="rgb(96,96,255)" stroke-linecap="square" stroke-miterlimit="10" stroke-width="48" d="M268 112l144 144-144 144M392 256H100"/></svg>');
+            transform: rotateZ(45deg);
+            width: 18px;
+            height: 18px;
+            padding: 1px;
+            left: 0;
+        }        
+    </style>
+    <script>
+        //Ater DOM created
+		var originalID, cloneID; //Interval pointer
+        window.addEventListener('DOMContentLoaded', function(){
+
+			//Create rolling banner clone
+            let roller = document.querySelector('.roller');
+            roller.id = 'roller1';
+
+            let clone = roller.cloneNode(true);
+            clone.id = 'roller2';
+            document.querySelector('.wrap').appendChild(clone); //Append clone banner
+
+			//Set position of original & clone banner
+            document.querySelector('#roller1').style.left = '0px';
+            document.querySelector('#roller2').style.left = document.querySelector('.roller ul').offsetWidth+'px';
+
+			//Assign CSS class
+            roller.classList.add('original');
+            clone.classList.add('clone');
+
+			//Create animations with interval method
+            let rollerWidth = document.querySelector('.roller ul').offsetWidth;//Width of banner rotation
+			let betweenDistance = 1;//Size of movement(must be Integer)
+			originalID = window.setInterval(betweenRollCallback, parseInt(1000/100), betweenDistance, document.querySelector('#roller1'));
+			cloneID = window.setInterval(betweenRollCallback, parseInt(1000/100), betweenDistance, document.querySelector('#roller2'));
+
+			//Common interval animation function
+			function betweenRollCallback(d, roller){
+				let left = parseInt(roller.style.left);
+				roller.style.left = (left - d)+'px';//Moving position
+				//Reset position check
+				if(rollerWidth + (left - d) <= 0){
+					roller.style.left = rollerWidth+'px';
+				}
+			}		
+        });
+    </script>
+</head>
+<body>
+	<div class="container">
+		<div class="rollingbanner">
+			<div class="wrap">
+				<div class="roller">
+					<ul>
+						<li>
+							<a href="#">
+								<strong class="name">3M</strong>
+								<span class="status up">
+									<span class="num">143.24</span>
+									<span class="rate"><em>+2.04%</em></span>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="#">
+								<strong class="name">Amgen</strong>
+								<span class="status down">
+									<span class="num">247.47</span>
+									<span class="rate"><em>-0.91%</em></span>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="#">
+								<strong class="name">Apple</strong>
+								<span class="status up">
+									<span class="num">162.47</span>
+									<span class="rate"><em>+3.25%</em></span>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="#">
+								<strong class="name">Intel</strong>
+								<span class="status down">
+									<span class="num">36.31</span>
+									<span class="rate"><em>-8.56%</em></span>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="#">
+								<strong class="name">JPMorgan</strong>
+								<span class="status up">
+									<span class="num">115.36</span>
+									<span class="rate"><em>+0.48%</em></span>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="#">
+								<strong class="name">McDonald's</strong>
+								<span class="status down">
+									<span class="num">263.37</span>
+									<span class="rate"><em>-0.03%</em></span>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="#">
+								<strong class="name">Microsoft</strong>
+								<span class="status up">
+									<span class="num">280.56</span>
+									<span class="rate"><em>+1.50%</em></span>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="#">
+								<strong class="name">Nike</strong>
+								<span class="status up">
+									<span class="num">114.92</span>
+									<span class="rate"><em>+2.40%</em></span>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="#">
+								<strong class="name">Procter&Gamble</strong>
+								<span class="status down">
+									<span class="num">138.91</span>
+									<span class="rate"><em>-6.18%</em></span>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="#">
+								<strong class="name">Verizon</strong>
+								<span class="status up">
+									<span class="num">46.19</span>
+									<span class="rate"><em>+1.41%</em></span>
+								</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
