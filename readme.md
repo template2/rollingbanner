@@ -4,7 +4,7 @@
 
 ## Files
 
-rollingbanner-javascript.html : Javascript animation version.
+rollingbanner-javascript.html : Javascript animation version.  
 rollingbanner-keyframes.html : CSS Keyframes animation version.
 
 
